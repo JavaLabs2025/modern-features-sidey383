@@ -1,0 +1,21 @@
+http:
+  port: 8080
+  host: "0.0.0.0"
+
+database:
+  host: "localhost"
+  port: 5432
+  database: "mydb"
+  user: "postgres"
+  password: "password"
+  maxPoolSize: 10
+  pool:
+    maxSize: 10
+    idleTimeout: 5
+    connectionTimeout: 1000
+    idleTimeoutUnit: "SECONDS"
+
+
+migration:
+  enabled: true
+  runOnStart: true

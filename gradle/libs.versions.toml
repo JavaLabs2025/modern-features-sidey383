@@ -1,0 +1,32 @@
+[versions]
+lombok = "1.18.42"
+jwt = "4.5.0"
+slf4j = "2.0.17"
+flyway = "11.20.0"
+postgres = "42.7.8"
+javalin = "6.7.0"
+jdbi = "3.51.0"
+hikaricp = "7.0.2"
+
+[libraries]
+slf4j = {group = "org.slf4j", name = "slf4j-simple", version.ref = "slf4j"}
+bcrypt = {group = "org.mindrot", name = "jbcrypt", version = "0.4"}
+
+flyway-core = {group = "org.flywaydb", name = "flyway-core", version.ref = "flyway"}
+flyway-database-postgresql = {group = "org.flywaydb", name = "flyway-database-postgresql", version.ref = "flyway"}
+postgresql = {group = "org.postgresql", name = "postgresql", version.ref = "postgres"}
+
+lombok = {group = "org.projectlombok", name = "lombok", version.ref = "lombok"}
+
+jwt = {group = "com.auth0", name = "java-jwt", version.ref = "jwt"}
+
+javalin = { group = "io.javalin", name = "javalin", version.ref = "javalin" }
+javalin-openapi-plugin = { group = "io.javalin.community.openapi", name = "javalin-openapi-plugin", version.ref = "javalin" }
+javalin-swagger-plugin = { group = "io.javalin.community.openapi", name = "javalin-swagger-plugin", version.ref = "javalin" }
+javalin-openapi-annotation = { group = "io.javalin.community.openapi", name = "openapi-annotation-processor", version.ref = "javalin" }
+
+jdbi-core = { module = "org.jdbi:jdbi3-core", version.ref = "jdbi" }
+jdbi-jackson2 = { module = "org.jdbi:jdbi3-jackson2", version.ref = "jdbi" }
+jdbi-postgres = { module = "org.jdbi:jdbi3-postgres", version.ref = "jdbi" }
+jdbi-sqlobject = { module = "org.jdbi:jdbi3-sqlobject", version.ref = "jdbi" }
+hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikaricp" }

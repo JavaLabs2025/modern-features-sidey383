@@ -1,0 +1,69 @@
+package org.lab.api;
+
+import com.fasterxml.jackson.databind.node.TextNode;
+import io.javalin.Javalin;
+import io.javalin.openapi.plugin.OpenApiPlugin;
+import io.javalin.openapi.plugin.OpenApiPluginConfiguration;
+import io.javalin.openapi.plugin.SecurityComponentConfiguration;
+import io.javalin.openapi.plugin.swagger.SwaggerConfiguration;
+import io.javalin.openapi.plugin.swagger.SwaggerPlugin;
+import lombok.extern.slf4j.Slf4j;
+import org.lab.api.authorization.AuthorizationProvider;
+import org.lab.api.routes.AuthentificationController;
+import org.lab.serice.CommandExecutor;
+
+@Slf4j
+public class RestApi {
+
+    private final AuthentificationController authentificationController;
+    private final Javalin javalin;
+
+    public RestApi(CommandExecutor commandExecutor, AuthorizationProvider authorizationProvider) {
+        this.authentificationController = new AuthentificationController(commandExecutor, authorizationProvider);
+        var javalinSetup = Javalin.create(config -> {
+            config.registerPlugin(new OpenApiPlugin(this::setupOpenApi));
+            config.registerPlugin(new SwaggerPlugin(this::setupSwagger));
+        });
+        javalinSetup.get("/", ctx -> ctx.redirect("/swagger"));
+        javalinSetup.get("/docs", ctx -> ctx.redirect("/swagger"));
+        javalinSetup = authentificationController.setupMethods(javalinSetup);
+        this.javalin = javalinSetup;
+    }
+
+    public void start() {
+        javalin.start(8080);
+    }
+
+    public void registerShutdownHook(Runnable onShutdown) {
+        javalin.events(eventConfig ->
+                eventConfig.serverStopped(onShutdown::run)
+        );
+    }
+
+    private void setupOpenApi(OpenApiPluginConfiguration pluginConfig) {
+        pluginConfig.withDocumentationPath("/openapi.json");
+        pluginConfig.withDefinitionConfiguration((version, definition) -> definition
+                .withInfo(info -> info
+                        .description("Project control backend")
+                        .version("1.0")
+                )
+                .withServer(openApiServer -> openApiServer
+                        .description("Server description goes here")
+                        .url("http://localhost:{port}{basePath}/" + version + "/")
+                        .variable("port", "Server's port", "8080", "8080")
+                        .variable("basePath", "Base path of the server", "", "", "v1")
+                )
+                .withSecurity(SecurityComponentConfiguration::withBearerAuth)
+                .withDefinitionProcessor(content -> {
+                    content.set("test", new TextNode("Value"));
+                    return content.toPrettyString();
+                })
+        );
+    }
+
+    private void setupSwagger(SwaggerConfiguration configuration) {
+        configuration.setTitle("Project control");
+        configuration.setDocumentationPath("/openapi.json");
+    }
+
+}
