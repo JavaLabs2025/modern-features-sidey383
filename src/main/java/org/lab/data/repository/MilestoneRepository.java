@@ -1,10 +1,10 @@
 package org.lab.data.repository;
 
-import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
+import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.lab.data.entity.Milestone;
 
-@RegisterBeanMapper(Milestone.class)
+@RegisterConstructorMapper(Milestone.class)
 public interface MilestoneRepository {
 
     @SqlQuery("""

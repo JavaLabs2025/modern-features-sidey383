@@ -1,21 +1,54 @@
 package org.lab.data.repository;
 
-import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
+import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
+import org.jdbi.v3.sqlobject.customizer.Bind;
+import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
+import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import org.lab.data.entity.Session;
 
 import java.time.Instant;
+import java.util.Optional;
 
-@RegisterBeanMapper(Session.class)
+@RegisterConstructorMapper(Session.class)
 public interface SessionRepository {
 
 
+    @GetGeneratedKeys({
+            "session_id",
+            "user_id",
+            "created_at",
+            "expires_at",
+            "ip_address",
+            "user_agent",
+            "active"
+    })
     @SqlUpdate("""
             INSERT INTO sessions (session_id, user_id, created_at, expires_at, ip_address, user_agent, active)
             VALUES (:sessionId, :userId, now(), :expiresAt, :ipAddress, :userAgent, true)
             RETURNING *
             """)
-    Session createSession(long userId, String sessionId, String ipAddress, String userAgent, Instant expiresAt);
+    Session createSession(
+            @Bind("userId") long userId,
+            @Bind("sessionId") String sessionId,
+            @Bind("ipAddress") String ipAddress,
+            @Bind("userAgent") String userAgent,
+            @Bind("expiresAt") Instant expiresAt
+    );
+
+    @SqlUpdate("""
+            UPDATE sessions SET expires_at = :expiresAt WHERE session_id = :sessionId
+            """)
+    void prolongateSession(
+            @Bind("sessionId") String sessionId,
+            @Bind("expiresAt") Instant expiresAt
+    );
+
+    @SqlQuery("""
+            SELECT session_id, user_id, created_at, expires_at, ip_address, user_agent, active FROM sessions
+            WHERE session_id = :sessionId
+            """)
+    Optional<Session> getSession(@Bind("sessionId") String sessionId);
 
     /*
 

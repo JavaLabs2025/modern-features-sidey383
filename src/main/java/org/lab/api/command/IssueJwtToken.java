@@ -2,6 +2,7 @@ package org.lab.api.command;
 
 import org.lab.api.authorization.AuthorizationProvider;
 import org.lab.api.error.InvalidRequestException;
+import org.lab.data.DatabaseProvider;
 import org.lab.serice.JwtService;
 
 public final class IssueJwtToken implements AuthentificationCommand<String> {
@@ -10,11 +11,11 @@ public final class IssueJwtToken implements AuthentificationCommand<String> {
         return true;
     }
 
-    public String execute(AuthorizationProvider authorizationProvider, JwtService jwtService) {
+    @Override
+    public String execute(DatabaseProvider databaseProvider, JwtService jwtService, AuthorizationProvider authorizationProvider) {
         var auth = authorizationProvider.currentAuthorization().orElseThrow(() ->
                 new InvalidRequestException("User no authorized")
         );
         return jwtService.createToken(auth);
     }
-
 }

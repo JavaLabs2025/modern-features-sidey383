@@ -1,9 +1,12 @@
 package org.lab.api.command;
 
 import lombok.RequiredArgsConstructor;
+import org.lab.api.authorization.AuthorizationProvider;
+import org.lab.data.DatabaseProvider;
 import org.lab.data.entity.Session;
 import org.lab.data.entity.User;
 import org.lab.data.repository.SessionRepository;
+import org.lab.serice.JwtService;
 
 import java.security.SecureRandom;
 import java.time.Duration;
@@ -35,4 +38,9 @@ public final class CreateSessionCommand implements AuthentificationCommand<Sessi
         return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
     }
 
+    @Override
+    public Session execute(DatabaseProvider databaseProvider, JwtService jwtService, AuthorizationProvider authorizationProvider) {
+        return databaseProvider.getSessionRepository()
+                .createSession(user.userId(), generateSessionId(), ipAddress, userAgent, Instant.now().plus(Duration.ofHours(16)));
+    }
 }

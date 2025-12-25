@@ -1,10 +1,10 @@
 package org.lab.data.repository;
 
-import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
+import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.lab.data.entity.BugReport;
 
-@RegisterBeanMapper(BugReport.class)
+@RegisterConstructorMapper(BugReport.class)
 public interface BugReportRepository {
 
     @SqlQuery("""

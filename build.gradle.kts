@@ -26,6 +26,7 @@ dependencies {
 
     implementation(libs.javalin)
     implementation(libs.javalin.openapi.plugin)
+    implementation(libs.javalin.redoc.plugin)
     implementation(libs.javalin.swagger.plugin)
     implementation(libs.javalin.openapi.annotation)
 

@@ -1,15 +1,16 @@
 package org.lab.api;
 
-import com.fasterxml.jackson.databind.node.TextNode;
 import io.javalin.Javalin;
 import io.javalin.openapi.plugin.OpenApiPlugin;
 import io.javalin.openapi.plugin.OpenApiPluginConfiguration;
 import io.javalin.openapi.plugin.SecurityComponentConfiguration;
+import io.javalin.openapi.plugin.redoc.ReDocConfiguration;
+import io.javalin.openapi.plugin.redoc.ReDocPlugin;
 import io.javalin.openapi.plugin.swagger.SwaggerConfiguration;
 import io.javalin.openapi.plugin.swagger.SwaggerPlugin;
 import lombok.extern.slf4j.Slf4j;
 import org.lab.api.authorization.AuthorizationProvider;
-import org.lab.api.routes.AuthentificationController;
+import org.lab.api.controller.AuthentificationController;
 import org.lab.serice.CommandExecutor;
 
 @Slf4j
@@ -23,9 +24,9 @@ public class RestApi {
         var javalinSetup = Javalin.create(config -> {
             config.registerPlugin(new OpenApiPlugin(this::setupOpenApi));
             config.registerPlugin(new SwaggerPlugin(this::setupSwagger));
+            config.registerPlugin(new ReDocPlugin(this::setupRedoc));
         });
         javalinSetup.get("/", ctx -> ctx.redirect("/swagger"));
-        javalinSetup.get("/docs", ctx -> ctx.redirect("/swagger"));
         javalinSetup = authentificationController.setupMethods(javalinSetup);
         this.javalin = javalinSetup;
     }
@@ -41,11 +42,11 @@ public class RestApi {
     }
 
     private void setupOpenApi(OpenApiPluginConfiguration pluginConfig) {
-        pluginConfig.withDocumentationPath("/openapi.json");
+        pluginConfig.withDocumentationPath("/openapi");
+        pluginConfig.withPrettyOutput();
         pluginConfig.withDefinitionConfiguration((version, definition) -> definition
                 .withInfo(info -> info
                         .description("Project control backend")
-                        .version("1.0")
                 )
                 .withServer(openApiServer -> openApiServer
                         .description("Server description goes here")
@@ -54,16 +55,16 @@ public class RestApi {
                         .variable("basePath", "Base path of the server", "", "", "v1")
                 )
                 .withSecurity(SecurityComponentConfiguration::withBearerAuth)
-                .withDefinitionProcessor(content -> {
-                    content.set("test", new TextNode("Value"));
-                    return content.toPrettyString();
-                })
         );
     }
 
     private void setupSwagger(SwaggerConfiguration configuration) {
         configuration.setTitle("Project control");
-        configuration.setDocumentationPath("/openapi.json");
+        configuration.setDocumentationPath("/openapi");
+    }
+
+    private void setupRedoc(ReDocConfiguration configuration) {
+        configuration.setDocumentationPath("/openapi");
     }
 
 }

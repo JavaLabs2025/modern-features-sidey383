@@ -1,7 +1,7 @@
 package org.lab.data.repository;
 
 
-import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
+import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import org.lab.data.entity.Ticket;
@@ -9,7 +9,7 @@ import org.lab.data.entity.TicketDeveloper;
 
 import java.util.List;
 
-@RegisterBeanMapper(Ticket.class)
+@RegisterConstructorMapper(Ticket.class)
 public interface TicketRepository {
 
     @SqlQuery("""
