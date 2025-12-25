@@ -1,19 +1,46 @@
 package org.lab.data.repository;
 
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
+import org.jdbi.v3.sqlobject.customizer.Bind;
+import org.jdbi.v3.sqlobject.customizer.BindMethods;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
+import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import org.lab.data.entity.ProjectUser;
+
+import java.util.List;
 
 @RegisterConstructorMapper(ProjectUser.class)
 public interface ProjectUserRepository {
 
-    @SqlQuery("""
+    @SqlUpdate("""
             INSERT INTO project_users (project_id, user_id, project_role, active)
             VALUES (:user.projectId, :user.userId, :user.projectRole, :user.active)
-            ON CONFLICT (project_id, user_id) DO UPDATE SET " +
+            ON CONFLICT (project_id, user_id) DO UPDATE SET
             project_role = :user.projectRole, active = :user.active
             """)
-    void addUserToProject(ProjectUser user);
+    void addUserToProject(@BindMethods("user") ProjectUser user);
+
+    @SqlQuery("""
+            SELECT * from project_users where user_id = :userId
+            """)
+    List<ProjectUser> getProjectUsersByUser(@Bind("userId") long userId);
+
+    @SqlQuery("""
+            SELECT * from project_users where project_id = :projectId
+            """)
+    List<ProjectUser> getProjectUsersByProject(@Bind("projectId") long projectId);
+
+    @SqlUpdate("""
+            UPDATE project_users SET project_role = 'DEVELOPER'
+            WHERE project_role = 'TEAM_LEADER' and project_id = :projectId
+            """)
+    void removeTeamLead(@Bind("projectId") long projectId);
+
+    @SqlUpdate("""
+            DELETE FROM project_users WHERE
+            project_id = :projectId AND user_id = :userId
+            """)
+    void remove(@Bind("projectId") long projectId, @BindMethods("userId") long userId);
 
 /*
 

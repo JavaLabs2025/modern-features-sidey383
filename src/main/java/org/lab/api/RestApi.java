@@ -10,24 +10,33 @@ import io.javalin.openapi.plugin.swagger.SwaggerConfiguration;
 import io.javalin.openapi.plugin.swagger.SwaggerPlugin;
 import lombok.extern.slf4j.Slf4j;
 import org.lab.api.authorization.AuthorizationProvider;
+import org.lab.api.controller.AbstractController;
 import org.lab.api.controller.AuthentificationController;
+import org.lab.api.controller.ProjectController;
 import org.lab.serice.CommandExecutor;
+
+import java.util.Collection;
+import java.util.List;
 
 @Slf4j
 public class RestApi {
 
-    private final AuthentificationController authentificationController;
     private final Javalin javalin;
 
     public RestApi(CommandExecutor commandExecutor, AuthorizationProvider authorizationProvider) {
-        this.authentificationController = new AuthentificationController(commandExecutor, authorizationProvider);
+        Collection<AbstractController> controllers = List.of(
+                new AuthentificationController(commandExecutor, authorizationProvider),
+                new ProjectController(commandExecutor, authorizationProvider)
+        );
         var javalinSetup = Javalin.create(config -> {
             config.registerPlugin(new OpenApiPlugin(this::setupOpenApi));
             config.registerPlugin(new SwaggerPlugin(this::setupSwagger));
             config.registerPlugin(new ReDocPlugin(this::setupRedoc));
         });
         javalinSetup.get("/", ctx -> ctx.redirect("/swagger"));
-        javalinSetup = authentificationController.setupMethods(javalinSetup);
+
+        controllers.forEach(controller -> controller.endpointSetup(javalinSetup));
+
         this.javalin = javalinSetup;
     }
 

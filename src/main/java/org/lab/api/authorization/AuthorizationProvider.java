@@ -2,7 +2,6 @@ package org.lab.api.authorization;
 
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.lab.serice.JwtService;
 
@@ -24,10 +23,16 @@ public class AuthorizationProvider {
         return currentAuthorization.get();
     }
 
-    public Handler wrap(Consumer<@NonNull Context> handler) {
+    public Authorization currentAuthorizationRequired() {
+        return currentAuthorization().orElseThrow(() ->
+                new RuntimeException("Authorization required")
+        );
+    }
+
+    public Handler wrap(Consumer<Context> handler) {
         return context -> {
             var authHeader = context.header("Authorization");
-            if (authHeader == null) {
+            if (authHeader == null || authHeader.isBlank()) {
                 authorize(null, () -> handler.accept(context));
             } else {
                 authorize(

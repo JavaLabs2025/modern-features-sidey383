@@ -2,7 +2,7 @@ package org.lab.api.command;
 
 import org.lab.data.DatabaseProvider;
 
-public sealed interface GetCommand<RESULT> extends Command<RESULT> permits GetUserCommand {
+public non-sealed interface DataCommand<RESULT> extends Command<RESULT> {
 
     RESULT execute(DatabaseProvider databaseProvider);
 

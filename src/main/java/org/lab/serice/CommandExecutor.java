@@ -17,14 +17,22 @@ public class CommandExecutor {
         return switch (command) {
             case AuthentificationCommand<RESULT> authentificationCommand -> {
                 if (authentificationCommand.requireAuthorization()) {
-                    authorizationProvider.currentAuthorization().orElseThrow(() ->
-                            new RuntimeException("Authorization required")
-                    );
+                    checkAuthorization();
                 }
                 yield authentificationCommand.execute(databaseProvider, jwtService, authorizationProvider);
             }
-            case GetCommand<RESULT> getCommand -> getCommand.execute(databaseProvider);
+            case DataCommand<RESULT> dataCommand -> dataCommand.execute(databaseProvider);
+            case AuthorizedDataCommand<RESULT> authorizedDataCommand -> {
+                checkAuthorization();
+                yield authorizedDataCommand.execute(databaseProvider, authorizationProvider);
+            }
         };
+    }
+
+    private void checkAuthorization() {
+        authorizationProvider.currentAuthorization().orElseThrow(() ->
+                new RuntimeException("Authorization required")
+        );
     }
 
 }

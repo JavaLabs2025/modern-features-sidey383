@@ -1,8 +1,12 @@
 package org.lab.data.repository;
 
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
+import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
+import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import org.lab.data.entity.Project;
+
+import java.util.Optional;
 
 @RegisterConstructorMapper(Project.class)
 public interface ProjectRepository {
@@ -10,8 +14,18 @@ public interface ProjectRepository {
     @SqlQuery("""
             SELECT * FROM projects WHERE project_id = :projectId
             """)
-    Project findById(long projectId);
+    Optional<Project> findById(@Bind("projectId") long projectId);
 
+    @SqlUpdate("""
+            INSERT INTO projects (name, project_manager_id) VALUES (:name, :projectManagerId)
+            RETURNING project_id
+            """)
+    long createProject(@Bind("name") String name, @Bind("projectManagerId") long projectManagerId);
+
+    @SqlUpdate("""
+            UPDATE projects SET team_lead_id = :teamLeadId WHERE project_id = :projectId
+            """)
+    void setTeamLead(@Bind("projectId") long projectId, @Bind("teamLeadId") Long teamLeadId);
 /*
 
     public Future<Project> findById(long projectId) {

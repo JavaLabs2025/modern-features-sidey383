@@ -4,7 +4,7 @@ import org.lab.api.authorization.AuthorizationProvider;
 import org.lab.data.DatabaseProvider;
 import org.lab.serice.JwtService;
 
-public sealed interface AuthentificationCommand<RESULT> extends Command<RESULT> permits CreateSessionCommand, CreateUserCommand, IssueJwtToken, LoginCommand, ProlongateSessionCommand {
+public non-sealed interface AuthentificationCommand<RESULT> extends Command<RESULT> {
 
     boolean requireAuthorization();
 

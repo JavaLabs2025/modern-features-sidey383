@@ -48,8 +48,13 @@ dependencies {
     implementation(libs.lombok)
     implementation(libs.jwt)
 
+    implementation(libs.mapstruct)
+    annotationProcessor(libs.mapstruct.processor)
+
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
+
+    annotationProcessor(libs.lombok.mapstruct.binding)
 }
 
 tasks.withType<JavaCompile> {
