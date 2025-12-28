@@ -8,6 +8,7 @@ import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import org.lab.data.entity.ProjectUser;
 
 import java.util.List;
+import java.util.Optional;
 
 @RegisterConstructorMapper(ProjectUser.class)
 public interface ProjectUserRepository {
@@ -29,6 +30,11 @@ public interface ProjectUserRepository {
             SELECT * from project_users where project_id = :projectId
             """)
     List<ProjectUser> getProjectUsersByProject(@Bind("projectId") long projectId);
+
+    @SqlQuery("""
+            SELECT * from project_users where project_id = :projectId AND user_id = :userId
+            """)
+    Optional<ProjectUser> findProjectUser(@Bind("projectId") long projectId, @Bind("userId") long userId);
 
     @SqlUpdate("""
             UPDATE project_users SET project_role = 'DEVELOPER'

@@ -1,7 +1,10 @@
 package org.lab.data.entity;
 
+import lombok.Builder;
+
+@Builder(toBuilder = true)
 public record BugReport(
-        long id,
+        long bugId,
         long projectId,
         String name,
         String description,
