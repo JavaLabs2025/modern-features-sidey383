@@ -34,4 +34,12 @@ public abstract class AbstractController {
         return commandExecutor.execute(command);
     }
 
+    protected long extractLongParam(Context context, String name) {
+        String value = context.queryParam(name);
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException("Require %s query parameter".formatted(name));
+        }
+        return Long.parseLong(value);
+    }
+
 }

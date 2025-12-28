@@ -10,10 +10,7 @@ import io.javalin.openapi.plugin.swagger.SwaggerConfiguration;
 import io.javalin.openapi.plugin.swagger.SwaggerPlugin;
 import lombok.extern.slf4j.Slf4j;
 import org.lab.api.authorization.AuthorizationProvider;
-import org.lab.api.controller.AbstractController;
-import org.lab.api.controller.AuthentificationController;
-import org.lab.api.controller.MilestoneController;
-import org.lab.api.controller.ProjectController;
+import org.lab.api.controller.*;
 import org.lab.serice.CommandExecutor;
 
 import java.util.Collection;
@@ -28,7 +25,8 @@ public class RestApi {
         Collection<AbstractController> controllers = List.of(
                 new AuthentificationController(commandExecutor, authorizationProvider),
                 new ProjectController(commandExecutor, authorizationProvider),
-                new MilestoneController(commandExecutor, authorizationProvider)
+                new MilestoneController(commandExecutor, authorizationProvider),
+                new BugReportController(commandExecutor, authorizationProvider)
         );
         var javalinSetup = Javalin.create(config -> {
             config.registerPlugin(new OpenApiPlugin(this::setupOpenApi));
