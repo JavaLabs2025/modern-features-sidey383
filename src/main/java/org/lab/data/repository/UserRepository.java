@@ -19,7 +19,7 @@ public interface UserRepository {
     @SqlQuery("SELECT * FROM users WHERE username = :username AND active = true")
     Optional<User> findByUsername(@Bind("username") String username);
 
-    @SqlUpdate("""
+    @SqlQuery("""
             INSERT INTO users (username, password, user_type, active)
             VALUES (:user.username, :user.password, :user.userType, :user.active) RETURNING user_id
             """)

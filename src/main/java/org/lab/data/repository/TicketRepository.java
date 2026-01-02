@@ -2,58 +2,65 @@ package org.lab.data.repository;
 
 
 import org.jdbi.v3.sqlobject.config.RegisterConstructorMapper;
+import org.jdbi.v3.sqlobject.customizer.Bind;
+import org.jdbi.v3.sqlobject.customizer.BindMethods;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import org.lab.data.entity.Ticket;
 import org.lab.data.entity.TicketDeveloper;
 
 import java.util.List;
+import java.util.Optional;
 
 @RegisterConstructorMapper(Ticket.class)
+@RegisterConstructorMapper(TicketDeveloper.class)
 public interface TicketRepository {
 
     @SqlQuery("""
             SELECT * FROM tickets WHERE ticket_id = :ticketId
             """)
-    Ticket findById(long ticketId);
+    Optional<Ticket> findById(@Bind("ticketId") long ticketId);
 
     @SqlQuery("""
-            INSERT INTO tickets (milestone_id, name, description)
-            VALUES (:ticket.milestoneId, :ticket.name, :ticket.description) RETURNING ticket_id
+            INSERT INTO tickets (milestone_id, name, description, status)
+            VALUES (:ticket.milestoneId, :ticket.name, :ticket.description, :ticket.status) RETURNING ticket_id
             """)
-    Long createTicket(Ticket ticket);
+    Long createTicket(@BindMethods("ticket") Ticket ticket);
 
     @SqlUpdate("""
-            UPDATE tickets SET milestone_id = :ticket.milestoneId, name = :ticket.name,
-            description = :ticket.description WHERE ticket_id = :ticket.ticketId
+            UPDATE tickets SET
+            name = :ticket.name and
+            description = :ticket.description and
+            status = :ticket.status
+            WHERE ticket_id = :ticket.ticketId
             """)
-    void updateTicket(Ticket ticket);
+    void updateTicket(@BindMethods("ticket") Ticket ticket);
 
     @SqlQuery("""
             SELECT * FROM tickets WHERE milestone_id = :milestoneId
             """)
-    List<Ticket> findTicketsByMilestone(long milestoneId);
+    List<Ticket> findTicketsByMilestone(@Bind("milestoneId") long milestoneId);
 
     @SqlQuery("""
             SELECT t.* FROM tickets t
             JOIN ticket_developers td ON t.ticket_id = td.ticket_id
             WHERE td.user_id = :userId
             """)
-    List<Ticket> findTicketsByDeveloper(long userId);
+    List<Ticket> findTicketsByDeveloper(@Bind("userId") long userId);
 
     @SqlUpdate("""
             INSERT INTO ticket_developers (ticket_id, user_id)
-            VALUES (#{ticketId}, #{userId}) ON CONFLICT (ticket_id, user_id) DO NOTHING
+            VALUES (:ticketDeveloper.ticketId, :ticketDeveloper.userId) ON CONFLICT (ticket_id, user_id) DO NOTHING
             """)
-    void addDeveloperToTicket(TicketDeveloper ticketDeveloper);
+    void addDeveloperToTicket(@BindMethods("ticketDeveloper") TicketDeveloper ticketDeveloper);
 
     @SqlUpdate("""
             DELETE FROM ticket_developers WHERE ticket_id = :ticketId AND user_id = :userId
             """)
-    void removeDeveloperFromTicket(long ticketId, long userId);
+    void removeDeveloperFromTicket(@Bind("ticketId") long ticketId, @Bind("userId") long userId);
 
     @SqlQuery("""
-            SELECT user_id FROM ticket_developers WHERE ticket_id = :ticketId
+            SELECT * FROM ticket_developers WHERE ticket_id = :ticketId
             """)
-    List<Long> getTicketDevelopers(long ticketId);
+    List<TicketDeveloper> getTicketDevelopers(@Bind("ticketId") long ticketId);
 }

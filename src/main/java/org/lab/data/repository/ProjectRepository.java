@@ -16,6 +16,14 @@ public interface ProjectRepository {
             """)
     Optional<Project> findById(@Bind("projectId") long projectId);
 
+    @SqlQuery("""
+            SELECT p.* FROM projects p
+            LEFT JOIN milestone m on m.project_id = p.project_id
+            LEFT JOIN ticket t on t.milestone_id = m.milestone_id
+            WHERE t.ticket_id = :ticketId
+            """)
+    Optional<Project> findByTicketId(@Bind("ticketId") long ticketId);
+
     @SqlUpdate("""
             INSERT INTO projects (name, project_manager_id) VALUES (:name, :projectManagerId)
             RETURNING project_id

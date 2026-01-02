@@ -55,6 +55,21 @@ dependencies {
     annotationProcessor(libs.lombok)
 
     annotationProcessor(libs.lombok.mapstruct.binding)
+
+    testImplementation(libs.junit.api)
+
+    testImplementation(libs.junit.api)
+    testRuntimeOnly(libs.junit.engine)
+    testRuntimeOnly(libs.junit.launcher)
+
+    testImplementation("org.testcontainers:postgresql:1.17.1")
+    testImplementation("org.testcontainers:testcontainers:1.17.1")
+    testImplementation("org.testcontainers:junit-jupiter:1.19.0")
+    testImplementation("io.rest-assured:rest-assured:5.5.0")
+    testImplementation(libs.assertj)
+
+    testAnnotationProcessor(libs.lombok)
+
 }
 
 tasks.withType<JavaCompile> {
@@ -65,6 +80,7 @@ tasks.withType<Test> {
     jvmArgs(
         "--enable-preview"
     )
+    useJUnitPlatform()
 }
 
 tasks.withType<JavaExec> {

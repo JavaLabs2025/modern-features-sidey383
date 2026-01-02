@@ -8,7 +8,7 @@ import org.mapstruct.Mapping;
 @Mapper
 public interface BugReportMapper {
 
-    @Mapping(target = "id", source = "bug_id")
+    @Mapping(target = "id", source = "bugId")
     BugReportAnswer mapToAnswer(BugReport bugReport);
 
 }

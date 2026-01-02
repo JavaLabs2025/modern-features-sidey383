@@ -47,16 +47,10 @@ CREATE TABLE project_milestones (
 CREATE TABLE tickets (
     ticket_id SERIAL PRIMARY KEY,
     milestone_id BIGINT NOT NULL REFERENCES milestones(milestone_id),
+    status VARCHAR(20) NOT NULL DEFAULT 'NEW',
     name VARCHAR(200) NOT NULL,
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Статусы тикетов
-CREATE TABLE ticket_status (
-    ticket_id BIGINT PRIMARY KEY REFERENCES tickets(ticket_id),
-    status VARCHAR(20) NOT NULL DEFAULT 'NEW',
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Разработчики тикетов

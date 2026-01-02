@@ -2,6 +2,7 @@ package org.lab.api.controller;
 
 import io.javalin.Javalin;
 import io.javalin.http.Context;
+import io.javalin.http.HttpStatus;
 import org.lab.api.authorization.Authorization;
 import org.lab.api.authorization.AuthorizationProvider;
 import org.lab.api.command.*;
@@ -37,6 +38,7 @@ public class AuthentificationController extends AbstractController {
         authProvider().authorize(authorization, () -> {
             var jwtToken = execute(new IssueJwtToken());
             context.json(userMapper.mapToAnswer(user, jwtToken, session.sessionId()));
+            context.status(HttpStatus.CREATED);
         });
     }
 

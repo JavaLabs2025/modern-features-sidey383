@@ -59,7 +59,7 @@ public class JwtService {
         return Algorithm.HMAC256(Base64.getDecoder().decode(jwtProperty.secret()));
     }
 
-    private DecodedJWT decodeToken(String token) {
+    public DecodedJWT decodeToken(String token) {
         try {
             var verifier = JWT.require(getAlgorithm())
                     .build();

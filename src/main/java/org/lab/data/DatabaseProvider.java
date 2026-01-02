@@ -20,28 +20,30 @@ public class DatabaseProvider implements Closeable {
     @Getter
     private final Jdbi jdbi;
     @Getter
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
     @Getter
-    private ProjectRepository projectRepository;
+    private final ProjectRepository projectRepository;
     @Getter
-    private ProjectUserRepository projectUserRepository;
+    private final ProjectUserRepository projectUserRepository;
     @Getter
-    private MilestoneRepository milestoneRepository;
+    private final MilestoneRepository milestoneRepository;
     @Getter
-    private TicketRepository ticketRepository;
+    private final TicketRepository ticketRepository;
     @Getter
-    private TicketStatusRepository ticketStatusRepository;
+    private final BugReportRepository bugReportRepository;
     @Getter
-    private BugReportRepository bugReportRepository;
-    @Getter
-    private SessionRepository sessionRepository;
+    private final SessionRepository sessionRepository;
 
     public DatabaseProvider() {
-        runMigration();
+        this("jdbc:postgresql://localhost:5432/features", "postgres", "12345");
+    }
+
+    public DatabaseProvider(String url, String username, String password) {
+        runMigration(url, username, password);
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:postgresql://localhost:5432/features"); // Ваш URL
-        config.setUsername("postgres");
-        config.setPassword("12345");
+        config.setJdbcUrl(url);
+        config.setUsername(username);
+        config.setPassword(password);
         config.setMaximumPoolSize(10);
         dataSource = new HikariDataSource(config);
 
@@ -53,16 +55,15 @@ public class DatabaseProvider implements Closeable {
         projectUserRepository = jdbi.onDemand(ProjectUserRepository.class);
         milestoneRepository = jdbi.onDemand(MilestoneRepository.class);
         ticketRepository = jdbi.onDemand(TicketRepository.class);
-        ticketStatusRepository = jdbi.onDemand(TicketStatusRepository.class);
         bugReportRepository = jdbi.onDemand(BugReportRepository.class);
         sessionRepository = jdbi.onDemand(SessionRepository.class);
 
         log.info("Database initialized");
     }
 
-    private void runMigration() {
+    private void runMigration(String url, String username, String password) {
         final FluentConfiguration config = new FluentConfiguration()
-                .dataSource("jdbc:postgresql://localhost:5432/features", "postgres", "12345")
+                .dataSource(url, username, password)
                 .locations("classpath:db/migration")
                 .baselineOnMigrate(true)
                 .table("flyway_schema_history");

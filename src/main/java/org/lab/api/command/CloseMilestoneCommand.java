@@ -5,6 +5,7 @@ import org.lab.api.authorization.AuthorizationProvider;
 import org.lab.data.DatabaseProvider;
 import org.lab.data.entity.Milestone;
 import org.lab.data.entity.MilestoneStatus;
+import org.lab.data.entity.TicketStatus;
 
 import java.util.Objects;
 
@@ -27,9 +28,13 @@ public class CloseMilestoneCommand implements AuthorizedDataCommand<Milestone> {
         }
         return switch (milestone.status()) {
             case CLOSED -> milestone;
-            case OPEN -> throw new IllegalStateException("Milestone not acticated");
+            case OPEN -> throw new IllegalStateException("Milestone not activated");
             case ACTIVE -> {
-                //TODO: check tasks status
+                boolean notComplete = databaseProvider.getTicketRepository().findTicketsByMilestone(milestone.milestoneId()).stream()
+                                .anyMatch(t -> t.status() != TicketStatus.COMPLETED);
+                if (notComplete) {
+                    throw new IllegalStateException("Milestone not complete");
+                }
                 databaseProvider.getMilestoneRepository().updateMilestone(
                         milestone.toBuilder().status(MilestoneStatus.CLOSED).build()
                 );

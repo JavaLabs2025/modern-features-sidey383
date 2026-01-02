@@ -26,7 +26,8 @@ public class RestApi {
                 new AuthentificationController(commandExecutor, authorizationProvider),
                 new ProjectController(commandExecutor, authorizationProvider),
                 new MilestoneController(commandExecutor, authorizationProvider),
-                new BugReportController(commandExecutor, authorizationProvider)
+                new BugReportController(commandExecutor, authorizationProvider),
+                new TicketController(commandExecutor, authorizationProvider)
         );
         var javalinSetup = Javalin.create(config -> {
             config.registerPlugin(new OpenApiPlugin(this::setupOpenApi));
