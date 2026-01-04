@@ -11,7 +11,7 @@ repositories {
 }
 
 application {
-    mainClass.set("org.lab.Startup")
+    mainClass.set("Main")
     applicationDefaultJvmArgs = listOf(
         "--enable-preview",
         "-Dslf4j.provider=ch.qos.logback.classic.spi.LogbackServiceProvider"

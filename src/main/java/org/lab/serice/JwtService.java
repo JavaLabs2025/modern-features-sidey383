@@ -1,6 +1,7 @@
 package org.lab.serice;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
@@ -61,9 +62,8 @@ public class JwtService {
 
     public DecodedJWT decodeToken(String token) {
         try {
-            var verifier = JWT.require(getAlgorithm())
-                    .build();
-            return verifier.verify(token);
+            var verifier = (JWTVerifier.BaseVerification) JWT.require(getAlgorithm());
+            return verifier.build(clock).verify(token);
         } catch (Exception e) {
             throw new InvalidRequestException("Fail to extract token claims", e);
         }
