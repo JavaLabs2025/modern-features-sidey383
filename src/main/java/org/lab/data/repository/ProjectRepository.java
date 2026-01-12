@@ -24,7 +24,7 @@ public interface ProjectRepository {
             """)
     Optional<Project> findByTicketId(@Bind("ticketId") long ticketId);
 
-    @SqlUpdate("""
+    @SqlQuery("""
             INSERT INTO projects (name, project_manager_id) VALUES (:name, :projectManagerId)
             RETURNING project_id
             """)

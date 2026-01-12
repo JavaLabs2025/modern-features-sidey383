@@ -16,7 +16,7 @@ public interface MilestoneRepository {
     @SqlQuery("""
             SELECT * FROM milestones WHERE milestone_id = :milestoneId
             """)
-    Optional<Milestone> findById(long milestoneId);
+    Optional<Milestone> findById(@Bind("milestoneId") long milestoneId);
 
     @SqlUpdate("""
             INSERT INTO milestones (project_id, start_time, end_time, status, name, description) VALUES

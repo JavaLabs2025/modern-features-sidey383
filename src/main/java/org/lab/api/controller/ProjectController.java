@@ -2,6 +2,7 @@ package org.lab.api.controller;
 
 import io.javalin.Javalin;
 import io.javalin.http.Context;
+import io.javalin.http.HttpStatus;
 import lombok.val;
 import org.lab.api.authorization.AuthorizationProvider;
 import org.lab.api.command.*;
@@ -57,6 +58,7 @@ public class ProjectController extends AbstractController {
         var manager = projectManager(project);
         var teamLeadOpt = teamLead(project);
         context.json(projectMapper.mapToAnswer(project, manager, teamLeadOpt.orElse(null)));
+        context.status(HttpStatus.CREATED);
     }
 
     private void changeTeamLead(Context context) {

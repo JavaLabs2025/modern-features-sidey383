@@ -1,7 +1,8 @@
 package org.lab;
 
 import io.restassured.RestAssured;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Order;
 import org.lab.api.RestApi;
 import org.lab.api.authorization.AuthorizationProvider;
 import org.lab.configuration.JwtProperty;
@@ -29,22 +30,28 @@ public class AbstractTest {
 
     protected static final ClockMock clock = new ClockMock();
 
-    protected static final JwtService jwtService = new JwtService(
-            new JwtProperty("cn5lLwe7rXKsI4CNQ9WAUTuWR6Tf6W/h/4tSj1d6qCQ="),
-            new TokenProperty(Duration.ofMinutes(15)),
-            clock
-    );
+    protected static JwtService jwtService;
 
-    protected final AuthorizationProvider authorizationProvider = new AuthorizationProvider(jwtService);
+    protected static AuthorizationProvider authorizationProvider;
 
-    protected final DatabaseProvider dataProvider = new DatabaseProvider(database.getJdbcUrl(), database.getUsername(), database.getPassword());
+    protected static DatabaseProvider dataProvider;
 
-    private final CommandExecutor commandExecutor = new CommandExecutor(jwtService, dataProvider, authorizationProvider);
+    private static CommandExecutor commandExecutor;
 
-    private final RestApi api = new RestApi(commandExecutor, authorizationProvider);
+    private static RestApi api;
 
-    @BeforeEach
-    public void setup() {
+    @Order(0)
+    @BeforeAll
+    public static void setup() {
+        jwtService = new JwtService(
+                new JwtProperty("cn5lLwe7rXKsI4CNQ9WAUTuWR6Tf6W/h/4tSj1d6qCQ="),
+                new TokenProperty(Duration.ofMinutes(15)),
+                clock
+        );
+        authorizationProvider = new AuthorizationProvider(jwtService);
+        dataProvider = new DatabaseProvider(database.getJdbcUrl(), database.getUsername(), database.getPassword());
+        commandExecutor = new CommandExecutor(jwtService, dataProvider, authorizationProvider);
+        api = new RestApi(commandExecutor, authorizationProvider);
         RestAssured.baseURI = "http://localhost:8080";
         api.start();
     }

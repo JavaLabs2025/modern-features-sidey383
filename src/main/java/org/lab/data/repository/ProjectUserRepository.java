@@ -46,7 +46,7 @@ public interface ProjectUserRepository {
             DELETE FROM project_users WHERE
             project_id = :projectId AND user_id = :userId
             """)
-    void remove(@Bind("projectId") long projectId, @BindMethods("userId") long userId);
+    void remove(@Bind("projectId") long projectId, @Bind("userId") long userId);
 
 /*
 
