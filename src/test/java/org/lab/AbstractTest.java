@@ -1,6 +1,7 @@
 package org.lab;
 
 import io.restassured.RestAssured;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
 import org.lab.api.RestApi;
@@ -54,6 +55,11 @@ public class AbstractTest {
         api = new RestApi(commandExecutor, authorizationProvider);
         RestAssured.baseURI = "http://localhost:8080";
         api.start();
+    }
+
+    @AfterAll
+    public static void teardown() {
+        api.stop();
     }
 
 }

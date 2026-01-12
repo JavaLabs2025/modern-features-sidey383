@@ -22,6 +22,7 @@ public class CreateBugReportCommand implements AuthorizedDataCommand<BugReport> 
         }
         var bugId = databaseProvider.getBugReportRepository().createBugReport(
                 BugReport.builder()
+                        .projectId(projectId)
                         .name(name)
                         .description(description)
                         .status(BugReportStatus.NEW)

@@ -18,7 +18,7 @@ public interface MilestoneRepository {
             """)
     Optional<Milestone> findById(@Bind("milestoneId") long milestoneId);
 
-    @SqlUpdate("""
+    @SqlQuery("""
             INSERT INTO milestones (project_id, start_time, end_time, status, name, description) VALUES
             (:milestone.projectId, :milestone.startTime, :milestone.endTime , :milestone.status, :milestone.name, :milestone.description)
             RETURNING milestone_id
@@ -27,14 +27,14 @@ public interface MilestoneRepository {
 
     @SqlUpdate("""
             UPDATE milestones SET
-            start_time = :milestone.startTime AND
-            end_time = :milestone.startTime AND
-            status = :milestone.status AND
-            name = :milestone.name AND
-            description :milestone.description
-            active :milestone.active
+            start_time = :milestone.startTime,
+            end_time = :milestone.startTime,
+            status = :milestone.status,
+            name = :milestone.name,
+            description = :milestone.description,
+            active = :milestone.active
             WHERE
-            milestoneId = :milestone.milestoneId
+            milestone_id = :milestone.milestoneId
             """)
     void updateMilestone(@BindMethods("milestone") Milestone milestone);
 

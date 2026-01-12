@@ -18,8 +18,8 @@ public interface ProjectRepository {
 
     @SqlQuery("""
             SELECT p.* FROM projects p
-            LEFT JOIN milestone m on m.project_id = p.project_id
-            LEFT JOIN ticket t on t.milestone_id = m.milestone_id
+            LEFT JOIN milestones m on m.project_id = p.project_id
+            LEFT JOIN tickets t on t.milestone_id = m.milestone_id
             WHERE t.ticket_id = :ticketId
             """)
     Optional<Project> findByTicketId(@Bind("ticketId") long ticketId);

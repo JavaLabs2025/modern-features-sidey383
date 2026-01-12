@@ -15,9 +15,10 @@ public class GetBugReportsCommand implements AuthorizedDataCommand<Collection<Bu
     @Override
     public Collection<BugReport> execute(DatabaseProvider databaseProvider, AuthorizationProvider authorizationProvider) {
         var auth = authorizationProvider.currentAuthorizationRequired();
-        databaseProvider.getProjectUserRepository().findProjectUser(projectId, auth.userId()).ifPresent(_ -> {
+        var optUser = databaseProvider.getProjectUserRepository().findProjectUser(projectId, auth.userId());
+        if (optUser.isEmpty()) {
             throw new IllegalArgumentException("You have no access to project");
-        });
+        }
         return databaseProvider.getBugReportRepository().findByProjectId(projectId);
     }
 

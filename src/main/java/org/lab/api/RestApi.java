@@ -77,4 +77,8 @@ public class RestApi {
         configuration.setDocumentationPath("/openapi");
     }
 
+    public void stop() {
+        javalin.stop();
+    }
+
 }

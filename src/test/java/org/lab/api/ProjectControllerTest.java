@@ -349,7 +349,7 @@ public class ProjectControllerTest extends AbstractAuthorizedTest {
                 .get("/api/ticket/developers")
                 .then()
                 .statusCode(200)
-                .extract().body().as(ListAnswer.class);
+                .extract().body().as(new TypeRef<>() {});
 
         assertThat(ticketDevelopers.getItemCount()).isEqualTo(1);
         TicketDeveloper assignedDeveloper = ticketDevelopers.getItems().iterator().next();

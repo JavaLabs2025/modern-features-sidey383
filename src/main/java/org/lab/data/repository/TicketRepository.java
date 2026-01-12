@@ -29,8 +29,8 @@ public interface TicketRepository {
 
     @SqlUpdate("""
             UPDATE tickets SET
-            name = :ticket.name and
-            description = :ticket.description and
+            name = :ticket.name,
+            description = :ticket.description,
             status = :ticket.status
             WHERE ticket_id = :ticket.ticketId
             """)

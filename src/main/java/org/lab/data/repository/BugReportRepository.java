@@ -23,7 +23,7 @@ public interface BugReportRepository {
             """)
     List<BugReport> findByProjectId(@Bind("projectId") long projectId);
 
-    @SqlUpdate("""
+    @SqlQuery("""
             INSERT INTO bug_reports (project_id, name, description, status)
             VALUES (:bugReport.projectId, :bugReport.name, :bugReport.description, :bugReport.status)
             RETURNING bug_id
@@ -32,10 +32,10 @@ public interface BugReportRepository {
 
     @SqlUpdate("""
             UPDATE bug_reports SET
-            project_id = :bugReport.projectId AND
-            name = :bugReport.name AND
-            description = :bugReport.description AND
-            status = :bugReport.status
+            project_id = :bugReport.projectId,
+            name = :bugReport.name,
+            description = :bugReport.description,
+            status = :bugReport.status,
             updated_at = NOW()
             WHERE bug_id = :bugReport.bugId
             """)
